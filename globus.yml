@@ -1,0 +1,34 @@
+# Setup Globus connect server
+# 
+# Usage: sudo ansible-playbook globus.yml
+---
+
+- name: Setup Globus connect server
+  hosts: corelab1
+
+  tasks:
+  - name: Import globus RPM key
+    rpm_key:
+      key: https://downloads.globus.org/toolkit/gt6/stable/repo/rpm/RPM-GPG-KEY-Globus
+      state: present
+
+  - name: Enable globus repo
+    yum:
+      name: https://downloads.globus.org/toolkit/globus-connect-server/globus-connect-server-repo-latest.noarch.rpm
+      state: present
+
+  - name: Enable EPEL repo
+    yum_repository:
+      name: epel
+      description: EPEL YUM repository
+      baseurl: https://dl.fedoraproject.org/pub/epel/$releasever/$basearch/
+
+  - name: Import EPEL RPM key
+    rpm_key:
+      # Key for RHEL7 https://getfedora.org/keys/
+      key: https://getfedora.org/static/352C64E5.txt
+      state: present
+
+  - name: Install globus-connect-server
+    yum:
+      name: globus-connect-server
