@@ -5,6 +5,8 @@
 
 - name: Setup Globus connect server
   hosts: corelab1
+  vars:
+    - globus_conf: /etc/globus-connect-server.conf
 
   tasks:
   - name: Import globus RPM key
@@ -32,3 +34,20 @@
   - name: Install globus-connect-server
     yum:
       name: globus-connect-server
+      state: latest
+
+  - name: Configure {{ globus_conf }}
+    lineinfile:
+      path: '{{ globus_conf }}'
+      regexp: '^Public = '
+      line: 'Public = True'
+
+  - name: Install pip for globus-cli
+    yum:
+      name: python-pip
+      state: present
+
+  - name: Install globus-cli
+    pip:
+      name: globus-cli
+      state: latest
