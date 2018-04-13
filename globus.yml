@@ -37,10 +37,21 @@
       state: latest
 
   - name: Configure {{ globus_conf }}
-    lineinfile:
+    ini_file:
       path: '{{ globus_conf }}'
-      regexp: '^Public = '
-      line: 'Public = True'
+      section: '{{ item.section }}'
+      option: '{{ item.option }}'
+      value: '{{ item.value }}'
+    loop:
+      - { section: 'Endpoint',
+          option: 'Public',
+          value: 'True' }
+      - { section: 'Security',
+          option: 'IdentityMethod',
+          value: 'CILogon' }
+      - { section: 'Security',
+          option: 'CILogonIdentityProvider',
+          value: 'University of Connecticut' }
 
   - name: Install pip for globus-cli
     yum:
