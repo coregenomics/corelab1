@@ -3,12 +3,25 @@
 # Usage: sudo ansible-playbook globus.yml
 ---
 
-- name: Setup Globus connect server
+- name: Setup globus CLI and globus connect server
   hosts: corelab1
   vars:
     - globus_conf: /etc/globus-connect-server.conf
 
   tasks:
+
+  # globus CLI
+  - name: Install pip for globus-cli
+    yum:
+      name: python-pip
+      state: present
+
+  - name: Install globus-cli
+    pip:
+      name: globus-cli
+      state: latest
+
+  # globus-connect-server
   - name: Import globus RPM key
     rpm_key:
       key: https://downloads.globus.org/toolkit/gt6/stable/repo/rpm/RPM-GPG-KEY-Globus
@@ -52,13 +65,3 @@
       - { section: 'Security',
           option: 'CILogonIdentityProvider',
           value: 'University of Connecticut' }
-
-  - name: Install pip for globus-cli
-    yum:
-      name: python-pip
-      state: present
-
-  - name: Install globus-cli
-    pip:
-      name: globus-cli
-      state: latest
